@@ -14,6 +14,7 @@ import {
   type Et0Dia,
 } from "@/lib/irrigation"
 import { comentarioConDictado } from "@/lib/dictado"
+import { BarraEfectividad } from "@/components/barra-efectividad"
 import { ComentarioPorVoz } from "@/components/comentario-por-voz"
 import { RelojDuracion } from "@/components/reloj-duracion"
 import { Button } from "@/components/ui/button"
@@ -127,6 +128,7 @@ export function RegarForm({
         Registra el riego de {lote.nombre} cuando el evento ya concluyó. La fecha de hoy suma a la racha a partir del segundo día seguido.
       </p>
       <RelojDuracion horas={horas} minutos={minutos} onHoras={setHoras} onMinutos={setMinutos} />
+      <BarraEfectividad necesariosMm={balance.necesariosMm} aplicadosMm={estimacion.mmAplicar} />
       <section aria-live="polite" className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
         <p className="text-sm text-muted-foreground">Milímetros a aplicar</p>
         <p className="mt-1 font-heading text-3xl tabular-nums">{formatoNumero(estimacion.mmAplicar, 1)} mm</p>

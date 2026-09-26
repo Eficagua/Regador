@@ -238,6 +238,27 @@ export function aguaAplicada(input: {
   return { metrosCubicos, mmNetos, mmBrutos, litrosNetosPorPlanta }
 }
 
+export type ColorBarraEfectividad = "amarillo" | "verde" | "rojo"
+
+/**
+ * La barra de efectividad usa los mismos milímetros que califican el riego.
+ * Amarillo mientras la lámina va llenando el suelo, verde dentro del 10%
+ * y rojo a lo ancho cuando el riego es excesivo. El gris es el fondo.
+ */
+export function barraEfectividad(
+  necesariosMm: number,
+  aplicadosMm: number,
+): { color: ColorBarraEfectividad; fraccion: number } {
+  const nota = puntuarRiego(necesariosMm, aplicadosMm)
+  if (nota.resultado === "adecuado") {
+    const fraccion = necesariosMm <= 0.05 ? 1 : Math.min(1, Math.max(0, aplicadosMm / necesariosMm))
+    return { color: "verde", fraccion }
+  }
+  if (nota.motivo === "exceso") return { color: "rojo", fraccion: 1 }
+  const fraccion = necesariosMm <= 0 ? 0 : Math.min(1, Math.max(0, aplicadosMm / necesariosMm))
+  return { color: "amarillo", fraccion }
+}
+
 export type MotivoRiego = "equilibrio" | "exceso" | "deficit"
 export type ResultadoRiego = "adecuado" | "ineficiente"
 

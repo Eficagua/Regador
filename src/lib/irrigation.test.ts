@@ -16,6 +16,7 @@ import {
   kcEfectivo,
   litrosDisponiblesPorPlanta,
   puntuarRiego,
+  barraEfectividad,
 } from "./irrigation"
 
 describe("fechas", () => {
@@ -185,6 +186,28 @@ describe("balance", () => {
   it("ancla el déficit en un riego del mismo día", () => {
     assert.equal(anclaParaFecha(["2026-09-01", "2026-09-10"], "2026-09-10"), "2026-09-10")
     assert.equal(anclaParaFecha(["2026-09-01", "2026-09-20"], "2026-09-10"), "2026-09-01")
+  })
+})
+
+describe("barra de efectividad", () => {
+  it("se llena en amarillo mientras los milímetros quedan bajo el 10%", () => {
+    assert.deepEqual(barraEfectividad(10, 0), { color: "amarillo", fraccion: 0 })
+    const media = barraEfectividad(10, 5)
+    assert.equal(media.color, "amarillo")
+    assert.ok(Math.abs(media.fraccion - 0.5) < 1e-9)
+  })
+
+  it("pasa a verde dentro del margen de 10%", () => {
+    const justo = barraEfectividad(10, 10)
+    assert.equal(justo.color, "verde")
+    assert.ok(Math.abs(justo.fraccion - 1) < 1e-9)
+    assert.equal(barraEfectividad(10, 9.2).color, "verde")
+    assert.equal(barraEfectividad(10, 10.8).color, "verde")
+  })
+
+  it("se pone roja y completa cuando el riego es excesivo", () => {
+    assert.deepEqual(barraEfectividad(10, 12), { color: "rojo", fraccion: 1 })
+    assert.deepEqual(barraEfectividad(0, 4), { color: "rojo", fraccion: 1 })
   })
 })
 
