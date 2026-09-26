@@ -30,10 +30,8 @@ export async function POST() {
   }
 
   if (!respuesta.ok) {
-    return NextResponse.json(
-      { error: "ElevenLabs no entregó el token de transcripción." },
-      { status: 502 },
-    )
+    const detalle = await respuesta.json().catch(() => null)
+    return NextResponse.json({ error: mensajeElevenLabs(detalle) }, { status: 502 })
   }
 
   const data = (await respuesta.json().catch(() => null)) as { token?: string } | null
@@ -42,4 +40,24 @@ export async function POST() {
   }
 
   return NextResponse.json({ token: data.token })
+}
+
+function mensajeElevenLabs(detalle: unknown): string {
+  const mensaje = textoError(detalle)
+  if (/speech_to_text|missing_permissions/i.test(mensaje)) {
+    return "La clave de ElevenLabs no tiene permiso de speech-to-text. Actívalo en la clave y vuelve a intentar."
+  }
+  return "ElevenLabs no entregó el token de transcripción."
+}
+
+function textoError(detalle: unknown): string {
+  if (!detalle || typeof detalle !== "object") return ""
+  const detail = "detail" in detalle ? detalle.detail : detalle
+  if (typeof detail === "string") return detail
+  if (!detail || typeof detail !== "object") return ""
+  const partes = ["message", "code", "status"].map((clave) => {
+    const valor = clave in detail ? detail[clave as keyof typeof detail] : ""
+    return typeof valor === "string" ? valor : ""
+  })
+  return partes.join(" ")
 }
