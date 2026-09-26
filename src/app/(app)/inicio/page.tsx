@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { Flame, Plus } from "lucide-react"
 import { siguienteLogro } from "@/lib/achievements"
 import { CULTIVOS, SISTEMAS } from "@/lib/catalog"
-import { formatoDuracion, formatoFecha, formatoM3, formatoNumero } from "@/lib/dates"
+import { formatoDuracion, formatoFecha, formatoM3 } from "@/lib/dates"
 import { rachaActiva } from "@/lib/irrigation"
 import { requireUser, vistaDeCampo } from "@/lib/queries"
 import { CropIcon } from "@/components/crop-icon"
@@ -65,7 +65,6 @@ export default async function InicioPage() {
       ) : (
         <section className="mt-6 grid gap-3 md:grid-cols-2">
           {vista.lotes.map((lote) => {
-            const pct = Math.round(lote.fraccion * 100)
             return (
               <article key={lote.id} className="flex flex-col rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
                 <div className="flex items-start gap-3">
@@ -91,13 +90,9 @@ export default async function InicioPage() {
                     ? `Duración sugerida · ${formatoDuracion(lote.duracionSugeridaMin)}`
                     : "Duración sugerida · el suelo no pide riego"}
                 </p>
-                <p className="mt-2 text-sm">
-                  {formatoNumero(lote.remanenteMm, 1)} mm de {formatoNumero(lote.aguaDisponibleMm, 1)} mm · {pct}%
-                </p>
                 {lote.faltantes > 0 ? (
                   <p className="mt-1 text-xs text-muted-foreground">Faltan {lote.faltantes} días de ET0 en este periodo.</p>
                 ) : null}
-                <p className="mt-1 text-xs text-muted-foreground">{formatoM3(lote.totalM3)} acumulados</p>
                 <Button asChild size="xl" className="mt-4">
                   <Link href={`/lotes/${lote.id}/regar`}>Anotar riego</Link>
                 </Button>
