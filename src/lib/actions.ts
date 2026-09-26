@@ -13,21 +13,47 @@ import {
   puntuarRiego,
   type CultivoTipo,
 } from "@/lib/irrigation"
-import { entrarConPerfil } from "@/lib/oauth"
 import { prisma } from "@/lib/prisma"
 import { campoDeUsuario, loteDeUsuario, metrosDelCampo, requireUser } from "@/lib/queries"
-import { cuentaSchema, campoSchema, loteSchema, mensajeZod, riegoSchema } from "@/lib/schemas"
-import { cerrarSesion } from "@/lib/session"
+import { campoSchema, loteSchema, mensajeZod, riegoSchema } from "@/lib/schemas"
+import { cerrarSesion, establecerSesion } from "@/lib/session"
 
-export async function entrarDemo(_prev: { error: string } | null, formData: FormData) {
-  const parsed = cuentaSchema.safeParse({
-    proveedor: formData.get("proveedor"),
-    nombre: formData.get("nombre"),
-    email: formData.get("email"),
-  })
-  if (!parsed.success) return { error: mensajeZod(parsed.error) }
-  const destino = await entrarConPerfil(parsed.data)
-  redirect(destino)
+const CUENTA_EJEMPLO = {
+  email: "ejemplo@lamina.test",
+  nombre: "Ana Ruiz",
+  proveedor: "ejemplo",
+} as const
+
+const CORREO_DEMO_PREVIO = "ana.ruiz@correo.test"
+
+export async function entrarEjemplo() {
+  const usuario = await asegurarCuentaEjemplo()
+  await establecerSesion(usuario.id)
+  const campo = await prisma.campo.findFirst({ where: { usuarioId: usuario.id } })
+  redirect(campo ? "/inicio" : "/onboarding")
+}
+
+async function asegurarCuentaEjemplo() {
+  const existente = await prisma.usuario.findUnique({ where: { email: CUENTA_EJEMPLO.email } })
+  if (existente) {
+    if (existente.nombre !== CUENTA_EJEMPLO.nombre || existente.proveedor !== CUENTA_EJEMPLO.proveedor) {
+      return prisma.usuario.update({
+        where: { id: existente.id },
+        data: { nombre: CUENTA_EJEMPLO.nombre, proveedor: CUENTA_EJEMPLO.proveedor },
+      })
+    }
+    return existente
+  }
+
+  const previo = await prisma.usuario.findUnique({ where: { email: CORREO_DEMO_PREVIO } })
+  if (previo) {
+    return prisma.usuario.update({
+      where: { id: previo.id },
+      data: CUENTA_EJEMPLO,
+    })
+  }
+
+  return prisma.usuario.create({ data: CUENTA_EJEMPLO })
 }
 
 export async function salir() {

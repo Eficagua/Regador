@@ -12,6 +12,7 @@ import {
   type CultivoTipo,
   type Et0Dia,
 } from "@/lib/irrigation"
+import { ComentarioPorVoz } from "@/components/comentario-por-voz"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -83,6 +84,12 @@ export function RegarForm({
     setMinutos(String(sugerida % 60))
   }
 
+  function agregarComentario(texto: string) {
+    const limpio = texto.trim()
+    if (!limpio) return
+    setInsumos((actual) => (actual.trim() ? `${actual.trimEnd()} ${limpio}` : limpio))
+  }
+
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="loteId" value={lote.id} />
@@ -131,15 +138,16 @@ export function RegarForm({
         ) : null}
       </div>
       <div className="grid gap-1.5">
-        <Label htmlFor="insumos">Aplicación de insumos</Label>
+        <Label htmlFor="insumos">Comentarios</Label>
         <Textarea
           id="insumos"
           name="insumos"
           value={insumos}
           onChange={(event) => setInsumos(event.target.value)}
-          placeholder="Opcional. Ej. Fertirriego con nitrato de calcio, 8 L/ha"
+          placeholder="Opcional. Dicta o escribe qué se aplicó, cómo quedó el lote o cualquier nota del riego."
           className="min-h-24 bg-card"
         />
+        <ComentarioPorVoz onCommitted={agregarComentario} />
       </div>
       <div className="rounded-3xl bg-[#e7f1f8] px-4 py-3 text-sm text-water-deep">
         <p>

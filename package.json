@@ -12,10 +12,10 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@elevenlabs/client": "^1.25.0",
     "@prisma/client": "^6.19.3",
     "class-variance-authority": "^0.7.1",
     "cn": "^0.4.0",
-    "jose": "^6.2.12",
     "leaflet": "^1.9.4",
     "lucide-react": "^1.48.0",
     "next": "15.5.26",

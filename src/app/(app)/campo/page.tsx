@@ -75,7 +75,7 @@ export default async function CampoPage() {
           {user.nombre} · {user.email}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Entraste con {user.proveedor === "apple" ? "Apple" : "Google"}. La racha es tuya, no del lote: hoy va en{" "}
+          Cuenta de ejemplo. La racha es tuya, no del lote: hoy va en{" "}
           {user.rachaActual > 0 ? `${user.rachaActual} días` : "cero"}.
         </p>
         <form action={salir} className="mt-4">

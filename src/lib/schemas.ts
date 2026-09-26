@@ -59,13 +59,7 @@ export const riegoSchema = z.object({
   fecha: fecha,
   horas: z.number().int().gte(0).lte(240),
   minutos: z.number().int().gte(0).lte(59),
-  insumos: z.string().trim().max(500, "La nota de insumos es demasiado larga.").optional(),
-})
-
-export const cuentaSchema = z.object({
-  proveedor: z.enum(["google", "apple"]),
-  nombre: z.string().trim().min(2, "Escribe tu nombre.").max(60, "Usa un nombre más corto."),
-  email: z.string().trim().email("Escribe un correo válido.").max(120),
+  insumos: z.string().trim().max(2000, "El comentario es demasiado largo.").optional(),
 })
 
 export function mensajeZod(error: z.ZodError): string {

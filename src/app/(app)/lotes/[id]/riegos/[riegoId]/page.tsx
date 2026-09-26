@@ -53,7 +53,7 @@ export default async function ResultadoPage({
         <p className="mt-1 text-muted-foreground">
           Evapotranspiración acumulada antes del riego: {formatoNumero(riego.mmDeficitAntes, 1)} mm. Volumen de este riego: {formatoM3(riego.metrosCubicos)}.
         </p>
-        {riego.descripcionInsumos ? <p className="mt-3">Insumos: {riego.descripcionInsumos}</p> : null}
+        {riego.descripcionInsumos ? <p className="mt-3">Comentario: {riego.descripcionInsumos}</p> : null}
       </section>
       <section className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
         <h2 className="font-heading text-xl">Racha</h2>
