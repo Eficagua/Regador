@@ -39,7 +39,7 @@ export default async function RegarPage({ params }: { params: Promise<{ id: stri
       </Link>
       <h1 className="mt-3 font-heading text-4xl tracking-tight">Anotar riego</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        {CULTIVOS[tipo].nombre} · {lote.cultivo.variedad}
+        {lote.nombre} · {CULTIVOS[tipo].nombre} · {lote.cultivo.variedad}
       </p>
       <div className="mt-5">
         <RegarForm
@@ -47,6 +47,7 @@ export default async function RegarPage({ params }: { params: Promise<{ id: stri
           et0={et.days}
           lote={{
             id: lote.id,
+            nombre: lote.nombre,
             fechaInicio: lote.cultivo.fechaInicio,
             fechasRiego: lote.riegos.map((riego) => riego.fecha),
             superficieHa: lote.superficieHa,

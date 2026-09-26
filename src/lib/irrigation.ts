@@ -309,6 +309,12 @@ export function balanceEnFecha(input: {
   }
 }
 
+export const RACHA_MINIMA = 2
+
+export function rachaActiva(dias: number): boolean {
+  return dias >= RACHA_MINIMA
+}
+
 export type RachaEstado = { actual: number; ultimaFecha: string | null }
 export type CambioRacha = "suma" | "mantiene" | "rompe" | "inicia"
 

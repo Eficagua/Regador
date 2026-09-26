@@ -51,11 +51,17 @@ export function textoRacha(input: {
   if (input.rachaRota) {
     return "Anotaste un riego con fecha anterior a hoy. La racha se rompió."
   }
+  if (input.rachaResultante >= 2 && input.rachaAntes < 2) {
+    return "La racha empieza en 2 días. Sigue sumando cada día que el riego se registre a tiempo."
+  }
   if (input.rachaResultante > input.rachaAntes) {
-    if (input.rachaResultante === 1) {
-      return "Empieza una racha de 1 día. Se mantiene si el siguiente riego se anota el mismo día en que ocurre."
-    }
     return `La racha llega a ${input.rachaResultante} días.`
   }
-  return `La racha se mantiene en ${input.rachaResultante} días. Este riego también es de hoy.`
+  if (input.rachaResultante >= 2) {
+    return `La racha se mantiene en ${input.rachaResultante} días. Este riego también es de hoy.`
+  }
+  if (input.rachaAntes > 0) {
+    return "Este riego también es de hoy. La racha aparece al segundo día seguido a tiempo."
+  }
+  return "Este riego es de hoy. La racha se acumula desde el segundo día seguido a tiempo."
 }

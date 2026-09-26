@@ -4,6 +4,7 @@ import { Flame } from "lucide-react"
 import { siguienteLogro } from "@/lib/achievements"
 import { salir } from "@/lib/actions"
 import { formatoM3 } from "@/lib/dates"
+import { rachaActiva } from "@/lib/irrigation"
 import { prisma } from "@/lib/prisma"
 import { metrosDelCampo } from "@/lib/queries"
 import { getSessionUser } from "@/lib/session"
@@ -34,8 +35,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <p className="mt-1 text-sm text-muted-foreground">{user.nombre}</p>
             <div className="mt-4 rounded-2xl bg-card p-4 ring-1 ring-foreground/10">
               <p className="flex items-center gap-2 text-sm">
-                <Flame className={user.rachaActual > 0 ? "size-4 text-streak" : "size-4 text-muted-foreground"} />
-                {user.rachaActual > 0 ? `Racha de ${user.rachaActual} días` : "Sin racha"}
+                <Flame className={rachaActiva(user.rachaActual) ? "size-4 text-streak" : "size-4 text-muted-foreground"} />
+                {rachaActiva(user.rachaActual) ? `Racha de ${user.rachaActual} días` : "Sin racha"}
               </p>
               <p className="mt-3 font-heading text-3xl">{formatoM3(total)}</p>
               <p className="text-sm text-muted-foreground">agua aplicada en el campo</p>

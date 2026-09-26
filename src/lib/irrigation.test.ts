@@ -7,6 +7,7 @@ import {
   aguaDisponibleMm,
   anclaParaFecha,
   aplicarRacha,
+  rachaActiva,
   balanceEnFecha,
   duracionSugeridaMin,
   fechasDeConsumo,
@@ -195,10 +196,16 @@ describe("eficiencia", () => {
 describe("racha", () => {
   const hoy = "2026-09-26"
 
-  it("empieza en 1 cuando el riego es de hoy", () => {
-    const racha = aplicarRacha({ actual: 0, ultimaFecha: null }, hoy, hoy)
-    assert.equal(racha.actual, 1)
-    assert.equal(racha.cambio, "inicia")
+  it("guarda el primer riego de hoy y activa la racha al segundo día", () => {
+    const primero = aplicarRacha({ actual: 0, ultimaFecha: null }, hoy, hoy)
+    assert.equal(primero.actual, 1)
+    assert.equal(primero.cambio, "inicia")
+    assert.equal(rachaActiva(primero.actual), false)
+
+    const segundo = aplicarRacha({ actual: 1, ultimaFecha: "2026-09-25" }, hoy, hoy)
+    assert.equal(segundo.actual, 2)
+    assert.equal(segundo.cambio, "suma")
+    assert.equal(rachaActiva(segundo.actual), true)
   })
 
   it("suma si ayer también se anotó en el día", () => {

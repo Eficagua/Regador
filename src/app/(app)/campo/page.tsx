@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import { refrescarClima, salir } from "@/lib/actions"
 import { formatoCoord, formatoNumero } from "@/lib/dates"
+import { rachaActiva } from "@/lib/irrigation"
 import { requireUser, vistaDeCampo } from "@/lib/queries"
 import { CampoForm } from "@/components/campo-form"
 import { Button } from "@/components/ui/button"
@@ -75,8 +76,8 @@ export default async function CampoPage() {
           {user.nombre} · {user.email}
         </p>
         <p className="mt-1 text-sm text-muted-foreground">
-          Cuenta de ejemplo. La racha es tuya, no del lote: hoy va en{" "}
-          {user.rachaActual > 0 ? `${user.rachaActual} días` : "cero"}.
+          Cuenta de ejemplo. La racha es tuya, no del lote:{" "}
+          {rachaActiva(user.rachaActual) ? `hoy va en ${user.rachaActual} días` : "empieza al segundo día seguido a tiempo"}.
         </p>
         <form action={salir} className="mt-4">
           <Button type="submit" variant="outline">

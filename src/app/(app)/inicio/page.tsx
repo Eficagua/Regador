@@ -4,6 +4,7 @@ import { Flame, Plus } from "lucide-react"
 import { siguienteLogro } from "@/lib/achievements"
 import { CULTIVOS, SISTEMAS } from "@/lib/catalog"
 import { formatoFecha, formatoM3, formatoNumero } from "@/lib/dates"
+import { rachaActiva } from "@/lib/irrigation"
 import { requireUser, vistaDeCampo } from "@/lib/queries"
 import { CropIcon } from "@/components/crop-icon"
 import { WaterBar } from "@/components/water-bar"
@@ -24,12 +25,12 @@ export default async function InicioPage() {
           <h1 className="font-heading text-4xl tracking-tight">{vista.campo.nombre}</h1>
         </div>
         <p className="flex items-center gap-1.5 rounded-full bg-card px-3 py-1.5 text-sm ring-1 ring-foreground/10">
-          <Flame className={user.rachaActual > 0 ? "size-4 text-streak" : "size-4 text-muted-foreground"} />
-          {user.rachaActual > 0 ? `${user.rachaActual} días` : "Sin racha"}
+          <Flame className={rachaActiva(user.rachaActual) ? "size-4 text-streak" : "size-4 text-muted-foreground"} />
+          {rachaActiva(user.rachaActual) ? `${user.rachaActual} días` : "Sin racha"}
         </p>
       </header>
       <p className="mt-2 max-w-xl text-sm text-muted-foreground">
-        La racha suma cuando anotas un riego el mismo día. Se rompe si la fecha es anterior.
+        La racha empieza en 2 días, cuando registras riegos a tiempo en días seguidos. Una fecha anterior la rompe.
       </p>
 
       <Link href="/logros" className="mt-5 block rounded-3xl bg-card p-4 ring-1 ring-foreground/10">

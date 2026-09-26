@@ -154,6 +154,46 @@
   max-height: none !important;
 }
 
+.reloj-rango {
+  height: 2.75rem;
+  width: 100%;
+  cursor: pointer;
+  appearance: none;
+  background: transparent;
+}
+
+.reloj-rango::-webkit-slider-runnable-track {
+  height: 0.5rem;
+  border-radius: 999px;
+  background: #e4ddd0;
+}
+
+.reloj-rango::-webkit-slider-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  margin-top: -0.625rem;
+  appearance: none;
+  border: 2px solid #f7f3ea;
+  border-radius: 999px;
+  background: #1d6fbf;
+  box-shadow: 0 4px 10px rgb(22 62 115 / 25%);
+}
+
+.reloj-rango::-moz-range-track {
+  height: 0.5rem;
+  border: 0;
+  border-radius: 999px;
+  background: #e4ddd0;
+}
+
+.reloj-rango::-moz-range-thumb {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 2px solid #f7f3ea;
+  border-radius: 999px;
+  background: #1d6fbf;
+}
+
 .lamina-pin span {
   display: block;
   width: 18px;

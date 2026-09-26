@@ -116,7 +116,7 @@ export function ComentarioPorVoz({ onCommitted }: { onCommitted: (texto: string)
         aria-pressed={escuchando}
       >
         {escuchando ? <Square /> : <Mic />}
-        {conectando ? "Conectando micrófono…" : escuchando ? "Detener dictado" : "Dictar comentario"}
+        {conectando ? "Conectando micrófono…" : escuchando ? "Detener voz" : "Comando de voz"}
       </Button>
       {parcial ? (
         <p className="rounded-2xl bg-[#e7f1f8] px-3 py-2 text-sm text-water-deep" aria-live="polite">

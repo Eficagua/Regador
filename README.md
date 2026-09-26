@@ -21,7 +21,7 @@ Copia `.env.example` a `.env` y define `SESSION_SECRET`. Para dictar comentarios
 - **Suelo.** Los milímetros disponibles salen de la textura (mm por metro) y la profundidad. Los litros por planta usan además la superficie mojada del sistema.
 - **Riego.** Los metros cúbicos acumulados son el agua total (caudal por planta × plantas × horas). La puntuación compara los milímetros netos —ya descontada la eficiencia— con los milímetros que el suelo podía recibir. Un margen de ±10% es riego adecuado. Fuera de ese margen, es ineficiente.
 - **Comentarios.** En anotar riego, el botón de audio abre el micrófono con Scribe (`@elevenlabs/client`). El texto parcial se muestra en pantalla y el texto confirmado se agrega al comentario del riego.
-- **Racha.** Sube cuando el riego se anota el mismo día. Se rompe si la fecha es anterior. La racha pertenece al usuario.
+- **Racha.** Cuenta los días seguidos con un riego registrado en la fecha de hoy. Aparece a partir de 2 y sigue sumando. Una fecha anterior la rompe. La racha pertenece al usuario.
 - **Logros.** El campo desbloquea embalses, reservorios, represas, presas, lagunas y lagos de México según el agua total aplicada. El umbral es una marca del campo, no el volumen real de ese cuerpo de agua.
 
 ## Pruebas

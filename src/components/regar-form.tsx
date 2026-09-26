@@ -13,6 +13,7 @@ import {
   type Et0Dia,
 } from "@/lib/irrigation"
 import { ComentarioPorVoz } from "@/components/comentario-por-voz"
+import { RelojDuracion } from "@/components/reloj-duracion"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -25,6 +26,7 @@ export function RegarForm({
 }: {
   lote: {
     id: string
+    nombre: string
     fechaInicio: string
     fechasRiego: string[]
     superficieHa: number
@@ -42,8 +44,8 @@ export function RegarForm({
 }) {
   const [state, action] = useActionState(registrarRiego, null)
   const [fecha, setFecha] = useState(lote.hoy)
-  const [horas, setHoras] = useState("4")
-  const [minutos, setMinutos] = useState("0")
+  const [horas, setHoras] = useState(1)
+  const [minutos, setMinutos] = useState(0)
   const [insumos, setInsumos] = useState("")
 
   const balance = useMemo(
@@ -67,7 +69,7 @@ export function RegarForm({
     plantas: lote.plantas,
     eficienciaPct: lote.eficienciaPct,
   })
-  const duracion = Math.round(num(horas) * 60 + num(minutos))
+  const duracion = horas * 60 + minutos
   const agua = aguaAplicada({
     duracionMin: Math.max(0, duracion),
     caudalPlantaLph: lote.caudalPlantaLph,
@@ -80,8 +82,9 @@ export function RegarForm({
 
   function usarSugerida() {
     if (!sugerida) return
-    setHoras(String(Math.floor(sugerida / 60)))
-    setMinutos(String(sugerida % 60))
+    const tope = Math.min(sugerida, 24 * 60)
+    setHoras(Math.floor(tope / 60))
+    setMinutos(tope % 60)
   }
 
   function agregarComentario(texto: string) {
@@ -96,6 +99,19 @@ export function RegarForm({
       {climaError ? (
         <p className="rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">{climaError}</p>
       ) : null}
+      <p className="text-sm leading-relaxed text-muted-foreground">
+        Registra el riego de {lote.nombre} cuando el evento ya concluyó. La fecha de hoy suma a la racha a partir del segundo día seguido.
+      </p>
+      <RelojDuracion horas={horas} minutos={minutos} onHoras={setHoras} onMinutos={setMinutos} />
+      <div className="grid gap-1.5">
+        <Label htmlFor="fecha">Fecha del riego</Label>
+        <Input id="fecha" name="fecha" type="date" required value={fecha} max={lote.hoy} min={lote.fechaInicio} onChange={(event) => setFecha(event.target.value)} className="h-12 bg-card" />
+        {fecha < lote.hoy ? (
+          <p className="text-xs text-muted-foreground">Fecha anterior. El riego queda en el lote y no suma a la racha.</p>
+        ) : (
+          <p className="text-xs text-muted-foreground">Fecha de hoy. La racha se acumula desde el segundo día seguido a tiempo.</p>
+        )}
+      </div>
       <div className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
         <p className="text-sm text-muted-foreground">Antes de este riego</p>
         <p className="mt-1 font-heading text-2xl">
@@ -106,45 +122,19 @@ export function RegarForm({
           {balance.faltantes.length > 0 ? ` Faltan ${balance.faltantes.length} días de ET0, así que la estimación puede quedar corta.` : ""}
         </p>
       </div>
+      {sugerida && sugerida > 0 ? (
+        <Button type="button" variant="secondary" onClick={usarSugerida}>
+          Duración sugerida · {formatoDuracion(Math.min(sugerida, 24 * 60))}
+        </Button>
+      ) : null}
       <div className="grid gap-1.5">
-        <Label htmlFor="fecha">Fecha del riego</Label>
-        <Input id="fecha" name="fecha" type="date" required value={fecha} max={lote.hoy} min={lote.fechaInicio} onChange={(event) => setFecha(event.target.value)} className="h-12 bg-card" />
-        {fecha < lote.hoy ? (
-          <p className="text-xs text-destructive">Una fecha anterior a hoy rompe la racha.</p>
-        ) : (
-          <p className="text-xs text-muted-foreground">Si el riego es de hoy, la racha se mantiene.</p>
-        )}
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <div className="grid gap-1.5">
-          <Label htmlFor="horas">Horas</Label>
-          <Input id="horas" name="horas" inputMode="numeric" value={horas} onChange={(event) => setHoras(event.target.value)} className="h-12 bg-card" />
-        </div>
-        <div className="grid gap-1.5">
-          <Label htmlFor="minutos">Minutos</Label>
-          <Input id="minutos" name="minutos" inputMode="numeric" value={minutos} onChange={(event) => setMinutos(event.target.value)} className="h-12 bg-card" />
-        </div>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {[1, 2, 4, 8].map((hora) => (
-          <Button key={hora} type="button" variant="outline" className="bg-card" onClick={() => { setHoras(String(hora)); setMinutos("0") }}>
-            {hora} h
-          </Button>
-        ))}
-        {sugerida && sugerida > 0 ? (
-          <Button type="button" variant="secondary" onClick={usarSugerida}>
-            Sugerida · {formatoDuracion(sugerida)}
-          </Button>
-        ) : null}
-      </div>
-      <div className="grid gap-1.5">
-        <Label htmlFor="insumos">Comentarios</Label>
+        <Label htmlFor="insumos">Comentarios de insumos</Label>
         <Textarea
           id="insumos"
           name="insumos"
           value={insumos}
           onChange={(event) => setInsumos(event.target.value)}
-          placeholder="Opcional. Dicta o escribe qué se aplicó, cómo quedó el lote o cualquier nota del riego."
+          placeholder="Aplicaciones de insumos durante el riego. Escríbelas o complétalas con el comando de voz."
           className="min-h-24 bg-card"
         />
         <ComentarioPorVoz onCommitted={agregarComentario} />
@@ -176,12 +166,8 @@ function SubmitButton({ disabled }: { disabled: boolean }) {
   const { pending } = useFormStatus()
   return (
     <Button type="submit" size="xl" disabled={disabled || pending}>
-      {pending ? "Guardando riego…" : "Guardar riego"}
+      {pending ? "Registrando riego…" : "Registrar riego"}
     </Button>
   )
 }
 
-function num(value: string): number {
-  const parsed = Number(value.trim().replace(",", "."))
-  return Number.isFinite(parsed) ? parsed : 0
-}
