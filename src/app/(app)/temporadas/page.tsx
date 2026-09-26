@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { formatoM3, formatoNumero } from "@/lib/dates"
 import { prisma } from "@/lib/prisma"
 import { campoDeUsuario, requireUser } from "@/lib/queries"
+import { imagenDeCultivo } from "@/components/crop-icon"
 import { asegurarTemporadaEjemplo } from "@/lib/temporada-ejemplo"
 import { agruparTemporadas } from "@/lib/temporadas"
 
@@ -32,9 +33,14 @@ export default async function TemporadasPage() {
         </section>
       ) : (
         <div className="mt-6 grid gap-6">
-          {grupos.map((grupo) => (
+          {grupos.map((grupo) => {
+            const foto = imagenDeCultivo(grupo.cultivo)
+            return (
             <section key={grupo.cultivo}>
-              <h2 className="font-heading text-2xl">{grupo.cultivo}</h2>
+              <h2 className="flex items-center gap-3 font-heading text-2xl">
+                {foto ? <img src={foto} alt="" width={512} height={512} className="size-12 object-contain" /> : null}
+                {grupo.cultivo}
+              </h2>
               <ul className="mt-3 grid gap-3">
                 {grupo.filas.map((fila) => (
                   <li key={fila.id} className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
@@ -49,7 +55,8 @@ export default async function TemporadasPage() {
                 ))}
               </ul>
             </section>
-          ))}
+            )
+          })}
         </div>
       )}
     </main>
