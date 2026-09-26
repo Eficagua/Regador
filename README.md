@@ -23,6 +23,7 @@ Copia `.env.example` a `.env` y define `SESSION_SECRET`. Para dictar comentarios
 - **Comentarios.** En anotar riego, el botón de audio abre el micrófono con Scribe (`@elevenlabs/client`). El texto parcial se muestra en pantalla y el texto confirmado se agrega al comentario del riego.
 - **Racha.** Cuenta los días seguidos con un riego registrado en la fecha de hoy. Aparece a partir de 2 y sigue sumando. Una fecha anterior la rompe. La racha pertenece al usuario.
 - **Logros.** El campo desbloquea embalses, reservorios, represas, presas, lagunas y lagos de México según el agua total aplicada. El umbral es una marca del campo, no el volumen real de ese cuerpo de agua.
+- **Temporadas.** El botón Temporadas abre la cosecha del campo separada por cultivo: kilos, riego en metros cúbicos, lluvia en milímetros y productividad del agua en litros por kilo. La cuenta de ejemplo incluye la nuez pecana de 2025.
 
 ## Pruebas
 

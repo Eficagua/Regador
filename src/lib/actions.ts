@@ -17,6 +17,7 @@ import { prisma } from "@/lib/prisma"
 import { campoDeUsuario, loteDeUsuario, metrosDelCampo, requireUser } from "@/lib/queries"
 import { campoSchema, loteSchema, mensajeZod, riegoSchema } from "@/lib/schemas"
 import { cerrarSesion, establecerSesion } from "@/lib/session"
+import { asegurarTemporadaEjemplo } from "@/lib/temporada-ejemplo"
 
 const CUENTA_EJEMPLO = {
   email: "ejemplo@lamina.test",
@@ -29,6 +30,7 @@ const CORREO_DEMO_PREVIO = "ana.ruiz@correo.test"
 export async function entrarEjemplo() {
   const usuario = await asegurarCuentaEjemplo()
   await establecerSesion(usuario.id)
+  await asegurarTemporadaEjemplo(usuario.id)
   const campo = await prisma.campo.findFirst({ where: { usuarioId: usuario.id } })
   redirect(campo ? "/inicio" : "/onboarding")
 }

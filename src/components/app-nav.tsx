@@ -2,13 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Award, Droplets, MapPin } from "lucide-react"
+import { Award, CalendarDays, Droplets, MapPin } from "lucide-react"
 import { cn } from "cn"
 
 const items = [
   { href: "/inicio", label: "Inicio", icon: Droplets },
   { href: "/logros", label: "Logros", icon: Award },
   { href: "/campo", label: "Campo", icon: MapPin },
+  { href: "/temporadas", label: "Temporadas", icon: CalendarDays },
 ]
 
 function activo(href: string, path: string) {
@@ -20,7 +21,7 @@ export function BottomNav() {
   const path = usePathname()
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 backdrop-blur md:hidden">
-      <ul className="mx-auto grid max-w-lg grid-cols-3 pb-[env(safe-area-inset-bottom)]">
+      <ul className="mx-auto grid max-w-lg grid-cols-4 pb-[env(safe-area-inset-bottom)]">
         {items.map((item) => {
           const Icon = item.icon
           const on = activo(item.href, path)

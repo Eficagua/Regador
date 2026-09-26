@@ -26,9 +26,10 @@ model Campo {
   lat       Float
   lng       Float
   createdAt DateTime     @default(now())
-  lotes     LoteRiego[]
-  logros    LogroCampo[]
-  et0       Et0Diario[]
+  lotes       LoteRiego[]
+  logros      LogroCampo[]
+  et0         Et0Diario[]
+  temporadas  Temporada[]
 
   @@index([usuarioId])
 }
@@ -113,6 +114,23 @@ model LogroCampo {
   createdAt     DateTime @default(now())
 
   @@unique([campoId, codigo])
+}
+
+model Temporada {
+  id                  String   @id @default(cuid())
+  campoId             String
+  campo               Campo    @relation(fields: [campoId], references: [id], onDelete: Cascade)
+  cultivo             String
+  anio                Int
+  cosechaKg           Float
+  riegoM3             Float
+  lluviaMm            Float
+  productividadLporKg Float
+  createdAt           DateTime @default(now())
+
+  @@unique([campoId, cultivo, anio])
+  @@index([campoId])
+  @@map("Temporadas")
 }
 
 model Et0Diario {

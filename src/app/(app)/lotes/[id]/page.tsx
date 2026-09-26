@@ -56,7 +56,11 @@ export default async function LotePage({ params }: { params: Promise<{ id: strin
         </Button>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-3">
+      <section className="grid gap-3 sm:grid-cols-2">
+        <Ficha titulo="Superficie">
+          <Dato etiqueta="Hectáreas" valor={`${formatoNumero(vista.superficieHa, 2)} ha`} />
+          <Dato etiqueta="Metros cuadrados" valor={`${formatoNumero(vista.superficieHa * 10_000, 0)} m²`} />
+        </Ficha>
         <Ficha titulo="Cultivo">
           <Dato etiqueta="Especie" valor={cultivo.nombre} />
           <Dato etiqueta="Variedad" valor={vista.variedad} />
