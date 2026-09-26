@@ -2,6 +2,7 @@ import { redirect } from "next/navigation"
 import { hoyDeCampo, syncEt0 } from "@/lib/et0"
 import {
   balanceEnFecha,
+  duracionSugeridaMin,
   kcEfectivo,
   type CultivoTipo,
   type SistemaTipo,
@@ -66,6 +67,7 @@ export type LoteVista = {
   fraccion: number
   depletionMm: number
   necesariosMm: number
+  duracionSugeridaMin: number | null
   litrosRemanentesPorPlanta: number
   faltantes: number
   fechasRiego: string[]
@@ -136,6 +138,13 @@ export function presentarLote(
     fraccion: balance.fraccion,
     depletionMm: balance.depletionMm,
     necesariosMm: balance.necesariosMm,
+    duracionSugeridaMin: duracionSugeridaMin({
+      necesariosMm: balance.necesariosMm,
+      superficieHa: lote.superficieHa,
+      caudalPlantaLph: lote.sistema.caudalPlantaLph,
+      plantas: lote.plantas,
+      eficienciaPct: lote.sistema.eficienciaPct,
+    }),
     litrosRemanentesPorPlanta: balance.litrosRemanentesPorPlanta,
     faltantes: balance.faltantes.length,
     fechasRiego,

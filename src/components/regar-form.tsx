@@ -3,12 +3,11 @@
 import { useActionState, useMemo, useRef, useState } from "react"
 import { useFormStatus } from "react-dom"
 import { registrarRiego } from "@/lib/actions"
-import { formatoDuracion, formatoNumero } from "@/lib/dates"
+import { formatoNumero } from "@/lib/dates"
 import {
   aguaAplicada,
   estimarMilimetros,
   balanceEnFecha,
-  duracionSugeridaMin,
   puntuarRiego,
   type CultivoTipo,
   type Et0Dia,
@@ -85,13 +84,6 @@ export function RegarForm({
       }),
     [fecha, lote, et0],
   )
-  const sugerida = duracionSugeridaMin({
-    necesariosMm: balance.necesariosMm,
-    superficieHa: lote.superficieHa,
-    caudalPlantaLph: lote.caudalPlantaLph,
-    plantas: lote.plantas,
-    eficienciaPct: lote.eficienciaPct,
-  })
   const duracion = horas * 60 + minutos
   const estimacion = estimarMilimetros({
     duracionMin: Math.max(0, duracion),
@@ -111,13 +103,6 @@ export function RegarForm({
   const nota = duracion > 0 ? puntuarRiego(balance.necesariosMm, agua.mmNetos) : null
   const sinClima = balance.fechas.length > 0 && balance.faltantes.length === balance.fechas.length
 
-  function usarSugerida() {
-    if (!sugerida) return
-    const tope = Math.min(sugerida, 24 * 60)
-    setHoras(Math.floor(tope / 60))
-    setMinutos(tope % 60)
-  }
-
   return (
     <form action={action} className="grid gap-4">
       <input type="hidden" name="loteId" value={lote.id} />
@@ -129,13 +114,6 @@ export function RegarForm({
       </p>
       <RelojDuracion horas={horas} minutos={minutos} onHoras={setHoras} onMinutos={setMinutos} />
       <BarraEfectividad necesariosMm={balance.necesariosMm} aplicadosMm={estimacion.mmAplicar} />
-      <section aria-live="polite" className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
-        <p className="text-sm text-muted-foreground">Milímetros a aplicar</p>
-        <p className="mt-1 font-heading text-3xl tabular-nums">{formatoNumero(estimacion.mmAplicar, 1)} mm</p>
-        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
-          Precipitación real de {formatoNumero(estimacion.precipitacionMmH, 1)} mm/h sobre el {formatoNumero(lote.superficieMojadaPct, 0)}% de superficie mojada, ajustada con la eficiencia de referencia del {formatoNumero(lote.eficienciaPct, 0)}%. El presurizado es inmediato: la duración completa entra en la estimación.
-        </p>
-      </section>
       <div className="grid gap-1.5">
         <Label htmlFor="fecha">Fecha del riego</Label>
         <Input id="fecha" name="fecha" type="date" required value={fecha} max={lote.hoy} min={lote.fechaInicio} onChange={(event) => setFecha(event.target.value)} className="h-12 bg-card" />
@@ -145,21 +123,6 @@ export function RegarForm({
           <p className="text-xs text-muted-foreground">Fecha de hoy. La racha se acumula desde el segundo día seguido a tiempo.</p>
         )}
       </div>
-      <div className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
-        <p className="text-sm text-muted-foreground">Antes de este riego</p>
-        <p className="mt-1 font-heading text-2xl">
-          {formatoNumero(balance.necesariosMm, 1)} mm libres
-        </p>
-        <p className="mt-1 text-sm text-muted-foreground">
-          La evapotranspiración suma {formatoNumero(balance.depletionMm, 1)} mm. El suelo guarda hasta {formatoNumero(lote.aguaDisponibleMm, 1)} mm.
-          {balance.faltantes.length > 0 ? ` Faltan ${balance.faltantes.length} días de ET0, así que la estimación puede quedar corta.` : ""}
-        </p>
-      </div>
-      {sugerida && sugerida > 0 ? (
-        <Button type="button" variant="secondary" onClick={usarSugerida}>
-          Duración sugerida · {formatoDuracion(Math.min(sugerida, 24 * 60))}
-        </Button>
-      ) : null}
       <div className="grid gap-1.5">
         <Label htmlFor="insumos">Comentarios de insumos</Label>
         <Textarea

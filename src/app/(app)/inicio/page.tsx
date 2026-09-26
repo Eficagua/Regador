@@ -3,7 +3,7 @@ import { redirect } from "next/navigation"
 import { Flame, Plus } from "lucide-react"
 import { siguienteLogro } from "@/lib/achievements"
 import { CULTIVOS, SISTEMAS } from "@/lib/catalog"
-import { formatoFecha, formatoM3, formatoNumero } from "@/lib/dates"
+import { formatoDuracion, formatoFecha, formatoM3, formatoNumero } from "@/lib/dates"
 import { rachaActiva } from "@/lib/irrigation"
 import { requireUser, vistaDeCampo } from "@/lib/queries"
 import { CropIcon } from "@/components/crop-icon"
@@ -86,6 +86,11 @@ export default async function InicioPage() {
                 <div className="mt-3">
                   <WaterBar fraccion={lote.fraccion} />
                 </div>
+                <p className="mt-2 text-sm">
+                  {lote.duracionSugeridaMin != null && lote.duracionSugeridaMin > 0
+                    ? `Duración sugerida · ${formatoDuracion(lote.duracionSugeridaMin)}`
+                    : "Duración sugerida · el suelo no pide riego"}
+                </p>
                 <p className="mt-2 text-sm">
                   {formatoNumero(lote.remanenteMm, 1)} mm de {formatoNumero(lote.aguaDisponibleMm, 1)} mm · {pct}%
                 </p>
