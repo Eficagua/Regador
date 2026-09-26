@@ -1,7 +1,6 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Flame } from "lucide-react"
-import { siguienteLogro } from "@/lib/achievements"
 import { salir } from "@/lib/actions"
 import { formatoM3 } from "@/lib/dates"
 import { rachaActiva } from "@/lib/irrigation"
@@ -18,12 +17,10 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const campo = await prisma.campo.findFirst({
     where: { usuarioId: user.id },
     include: {
-      logros: true,
       lotes: { include: { riegos: { select: { metrosCubicos: true } } } },
     },
   })
   const total = campo ? metrosDelCampo(campo) : 0
-  const siguiente = siguienteLogro(total)
 
   return (
     <div className="min-h-dvh">
@@ -40,13 +37,6 @@ export default async function AppLayout({ children }: { children: React.ReactNod
               </p>
               <p className="mt-3 font-heading text-3xl">{formatoM3(total)}</p>
               <p className="text-sm text-muted-foreground">agua aplicada en el campo</p>
-              {siguiente ? (
-                <p className="mt-3 text-sm">
-                  Siguiente: {siguiente.nombre}, a {formatoM3(siguiente.umbralM3)}.
-                </p>
-              ) : (
-                <p className="mt-3 text-sm">Llegaste al lago más grande del tablero.</p>
-              )}
             </div>
             <div className="mt-4">
               <SideNav />

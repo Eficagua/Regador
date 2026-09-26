@@ -1,9 +1,8 @@
 import Link from "next/link"
 import { redirect } from "next/navigation"
 import { Flame, Plus } from "lucide-react"
-import { siguienteLogro } from "@/lib/achievements"
 import { CULTIVOS, SISTEMAS } from "@/lib/catalog"
-import { formatoDuracion, formatoFecha, formatoM3 } from "@/lib/dates"
+import { formatoDuracion, formatoFecha } from "@/lib/dates"
 import { rachaActiva } from "@/lib/irrigation"
 import { requireUser, vistaDeCampo } from "@/lib/queries"
 import { CropIcon } from "@/components/crop-icon"
@@ -14,8 +13,6 @@ export default async function InicioPage() {
   const user = await requireUser()
   const vista = await vistaDeCampo(user.id)
   if (!vista) redirect("/onboarding")
-  const siguiente = siguienteLogro(vista.totalM3)
-  const progreso = siguiente ? Math.min(1, vista.totalM3 / siguiente.umbralM3) : 1
 
   return (
     <main className="mx-auto w-full max-w-3xl px-4 py-6 md:px-0">
@@ -32,19 +29,6 @@ export default async function InicioPage() {
       <p className="mt-2 max-w-xl text-sm text-muted-foreground">
         La racha empieza en 2 días, cuando registras riegos a tiempo en días seguidos. Una fecha anterior la rompe.
       </p>
-
-      <Link href="/logros" className="mt-5 block rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
-        <p className="text-sm text-muted-foreground">Agua aplicada</p>
-        <p className="font-heading text-3xl">{formatoM3(vista.totalM3)}</p>
-        <div className="mt-3 h-2 overflow-hidden rounded-full bg-track">
-          <div className="h-full rounded-full bg-leaf" style={{ width: `${progreso * 100}%` }} />
-        </div>
-        <p className="mt-2 text-sm">
-          {siguiente
-            ? `Siguiente logro: ${siguiente.categoria.toLowerCase()} ${siguiente.nombre}`
-            : "Completaste los logros de agua equivalente."}
-        </p>
-      </Link>
 
       {vista.et.error ? (
         <p className="mt-4 rounded-2xl bg-destructive/10 px-4 py-3 text-sm text-destructive">
