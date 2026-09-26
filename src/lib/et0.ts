@@ -111,7 +111,7 @@ function mezclar(destino: Map<string, number>, serie: Et0Dia[]) {
 
 async function pedirSerie(url: URL): Promise<Et0Dia[]> {
   const respuesta = await fetch(url, {
-    headers: { "User-Agent": "Lamina/0.1 (bitacora de riego)" },
+    headers: { "User-Agent": "regador/0.1 (bitacora de riego)" },
     signal: AbortSignal.timeout(12_000),
     cache: "no-store",
   })

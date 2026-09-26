@@ -1,4 +1,4 @@
-# Lámina
+# regador
 
 Bitácora de riego para un campo. La demostración entra con la cuenta de ejemplo de Ana Ruiz, marca el campo en el mapa y crea lotes de ají, nogal, maíz o manzana. Cada lote guarda un cultivo, un suelo y un sistema de riego. En el inicio, la barra azul muestra el agua que todavía le queda al suelo.
 

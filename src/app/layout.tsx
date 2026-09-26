@@ -13,10 +13,10 @@ const fraunces = Fraunces({
 })
 
 export const metadata: Metadata = {
-  title: "Lámina",
+  title: "regador",
   description: "Bitácora de riego: lotes, suelo y evapotranspiración de tu campo.",
-  applicationName: "Lámina",
-  appleWebApp: { capable: true, title: "Lámina", statusBarStyle: "default" },
+  applicationName: "regador",
+  appleWebApp: { capable: true, title: "regador", statusBarStyle: "default" },
 }
 
 export const viewport: Viewport = {

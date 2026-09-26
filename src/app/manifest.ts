@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next"
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "Lámina",
-    short_name: "Lámina",
+    name: "regador",
+    short_name: "regador",
     description: "Bitácora de riego: lotes, suelo y evapotranspiración.",
     start_url: "/",
     display: "standalone",

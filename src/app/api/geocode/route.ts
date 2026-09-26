@@ -12,7 +12,7 @@ export async function GET(request: Request) {
   url.searchParams.set("limit", "5")
   const respuesta = await fetch(url, {
     headers: {
-      "User-Agent": "Lamina/0.1 (bitacora de riego)",
+      "User-Agent": "regador/0.1 (bitacora de riego)",
       "Accept-Language": "es",
     },
     signal: AbortSignal.timeout(8000),
