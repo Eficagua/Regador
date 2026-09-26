@@ -61,7 +61,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             </Link>
           </aside>
         ) : null}
-        <div className={campo ? "min-w-0 flex-1 pb-28 md:pb-0" : "min-w-0 flex-1"}>{children}</div>
+        <div className={campo ? "min-w-0 flex-1 pb-28 md:pb-0" : "min-w-0 flex-1"}>
+          {campo ? (
+            <div className="px-4 pt-4 md:hidden">
+              <Marca />
+            </div>
+          ) : null}
+          {children}
+        </div>
       </div>
       {campo ? <BottomNav /> : null}
     </div>
