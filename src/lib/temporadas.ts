@@ -4,7 +4,7 @@ export const TEMPORADA_EJEMPLO_NUEZ = {
   cosechaKg: 5000,
   riegoM3: 50000,
   lluviaMm: 310,
-  productividadLporKg: 5000,
+  productividadLporKg: 10000,
 } as const
 
 export type FilaTemporada = {
