@@ -1,0 +1,127 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Usuario {
+  id               String   @id @default(cuid())
+  nombre           String
+  email            String   @unique
+  proveedor        String
+  rachaActual      Int      @default(0)
+  rachaUltimaFecha String?
+  createdAt        DateTime @default(now())
+  campos           Campo[]
+}
+
+model Campo {
+  id        String       @id @default(cuid())
+  usuarioId String
+  usuario   Usuario      @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+  nombre    String
+  lat       Float
+  lng       Float
+  createdAt DateTime     @default(now())
+  lotes     LoteRiego[]
+  logros    LogroCampo[]
+  et0       Et0Diario[]
+
+  @@index([usuarioId])
+}
+
+model LoteRiego {
+  id           String        @id @default(cuid())
+  campoId      String
+  campo        Campo         @relation(fields: [campoId], references: [id], onDelete: Cascade)
+  nombre       String
+  superficieHa Float
+  plantas      Int
+  createdAt    DateTime      @default(now())
+  cultivo      Cultivo?
+  suelo        Suelo?
+  sistema      SistemaRiego?
+  riegos       Riego[]
+
+  @@index([campoId])
+}
+
+model Cultivo {
+  id           String    @id @default(cuid())
+  loteId       String    @unique
+  lote         LoteRiego @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  tipo         String
+  variedad     String
+  coberturaPct Float
+  fechaInicio  String
+}
+
+model SistemaRiego {
+  id                  String    @id @default(cuid())
+  loteId              String    @unique
+  lote                LoteRiego @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  tipo                String
+  caudalEmisorLph     Float
+  caudalPlantaLph     Float
+  eficienciaPct       Float
+  superficieMojadaPct Float
+  anchoMojadoM        Float
+}
+
+model Suelo {
+  id                         String    @id @default(cuid())
+  loteId                     String    @unique
+  lote                       LoteRiego @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  textura                    String
+  profundidadCm              Float
+  aguaDisponibleMm           Float
+  litrosDisponiblesPorPlanta Float
+}
+
+model Riego {
+  id                 String    @id @default(cuid())
+  loteId             String
+  lote               LoteRiego @relation(fields: [loteId], references: [id], onDelete: Cascade)
+  fecha              String
+  duracionMin        Int
+  descripcionInsumos String?
+  mmAplicados        Float
+  metrosCubicos      Float
+  mmDeficitAntes     Float
+  mmNecesarios       Float
+  puntuacion         Int
+  resultado          String
+  motivo             String
+  rachaAntes         Int
+  rachaResultante    Int
+  rachaRota          Boolean
+  logrosJson         String    @default("[]")
+  createdAt          DateTime  @default(now())
+
+  @@index([loteId, fecha])
+}
+
+model LogroCampo {
+  id            String   @id @default(cuid())
+  campoId       String
+  campo         Campo    @relation(fields: [campoId], references: [id], onDelete: Cascade)
+  codigo        String
+  metrosCubicos Float
+  createdAt     DateTime @default(now())
+
+  @@unique([campoId, codigo])
+}
+
+model Et0Diario {
+  id        String   @id @default(cuid())
+  campoId   String
+  campo     Campo    @relation(fields: [campoId], references: [id], onDelete: Cascade)
+  fecha     String
+  et0Mm     Float
+  updatedAt DateTime @updatedAt
+
+  @@unique([campoId, fecha])
+}
