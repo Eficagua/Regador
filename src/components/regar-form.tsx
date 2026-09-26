@@ -1,6 +1,6 @@
 "use client"
 
-import { useActionState, useMemo, useState } from "react"
+import { useActionState, useMemo, useRef, useState } from "react"
 import { useFormStatus } from "react-dom"
 import { registrarRiego } from "@/lib/actions"
 import { formatoDuracion, formatoNumero } from "@/lib/dates"
@@ -12,6 +12,7 @@ import {
   type CultivoTipo,
   type Et0Dia,
 } from "@/lib/irrigation"
+import { comentarioConDictado } from "@/lib/dictado"
 import { ComentarioPorVoz } from "@/components/comentario-por-voz"
 import { RelojDuracion } from "@/components/reloj-duracion"
 import { Button } from "@/components/ui/button"
@@ -47,6 +48,25 @@ export function RegarForm({
   const [horas, setHoras] = useState(1)
   const [minutos, setMinutos] = useState(0)
   const [insumos, setInsumos] = useState("")
+  const insumosRef = useRef(insumos)
+  const baseDictado = useRef("")
+  const dictando = useRef(false)
+  insumosRef.current = insumos
+
+  function empezarDictado() {
+    dictando.current = true
+    baseDictado.current = insumosRef.current
+  }
+
+  function aplicarDictado(texto: string) {
+    const siguiente = comentarioConDictado(baseDictado.current, texto)
+    insumosRef.current = siguiente
+    setInsumos(siguiente)
+  }
+
+  function terminarDictado() {
+    dictando.current = false
+  }
 
   const balance = useMemo(
     () =>
@@ -85,12 +105,6 @@ export function RegarForm({
     const tope = Math.min(sugerida, 24 * 60)
     setHoras(Math.floor(tope / 60))
     setMinutos(tope % 60)
-  }
-
-  function agregarComentario(texto: string) {
-    const limpio = texto.trim()
-    if (!limpio) return
-    setInsumos((actual) => (actual.trim() ? `${actual.trimEnd()} ${limpio}` : limpio))
   }
 
   return (
@@ -133,11 +147,16 @@ export function RegarForm({
           id="insumos"
           name="insumos"
           value={insumos}
-          onChange={(event) => setInsumos(event.target.value)}
+          onChange={(event) => {
+            const valor = event.target.value
+            insumosRef.current = valor
+            setInsumos(valor)
+            if (!dictando.current) baseDictado.current = valor
+          }}
           placeholder="Aplicaciones de insumos durante el riego. Escríbelas o complétalas con el comando de voz."
           className="min-h-24 bg-card"
         />
-        <ComentarioPorVoz onCommitted={agregarComentario} />
+        <ComentarioPorVoz onSessionStart={empezarDictado} onTranscript={aplicarDictado} onSessionEnd={terminarDictado} />
       </div>
       <div className="rounded-3xl bg-[#e7f1f8] px-4 py-3 text-sm text-water-deep">
         <p>

@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start -p 3847 -H 0.0.0.0",
     "lint": "eslint",
-    "test": "tsx --test src/lib/irrigation.test.ts",
+    "test": "tsx --test src/lib/irrigation.test.ts src/lib/dictado.test.ts",
     "db:push": "prisma db push",
     "postinstall": "prisma generate"
   },
