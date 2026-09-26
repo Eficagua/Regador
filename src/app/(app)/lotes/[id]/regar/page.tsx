@@ -57,6 +57,7 @@ export default async function RegarPage({ params }: { params: Promise<{ id: stri
             litrosDisponiblesPorPlanta: lote.suelo.litrosDisponiblesPorPlanta,
             caudalPlantaLph: lote.sistema.caudalPlantaLph,
             eficienciaPct: lote.sistema.eficienciaPct,
+            superficieMojadaPct: lote.sistema.superficieMojadaPct,
             hoy,
             cultivo: tipo,
           }}

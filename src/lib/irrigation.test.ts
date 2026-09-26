@@ -4,6 +4,7 @@ import { logrosAlcanzados, LOGROS, siguienteLogro } from "./achievements"
 import { addDays, diffDays, todayISO } from "./dates"
 import {
   aguaAplicada,
+  estimarMilimetros,
   aguaDisponibleMm,
   anclaParaFecha,
   aplicarRacha,
@@ -67,6 +68,52 @@ describe("suelo y lámina", () => {
     })
     assert.equal(agua.metrosCubicos, 4)
     assert.ok(Math.abs(agua.mmNetos - 0.36) < 1e-9)
+  })
+
+  it("estima los milímetros con la precipitación real, la superficie mojada y la eficiencia", () => {
+    const estimacion = estimarMilimetros({
+      duracionMin: 120,
+      caudalPlantaLph: 2,
+      plantas: 1000,
+      superficieHa: 1,
+      superficieMojadaPct: 40,
+      eficienciaPct: 90,
+    })
+    assert.ok(Math.abs(estimacion.precipitacionMmH - 0.5) < 1e-9)
+    assert.ok(Math.abs(estimacion.mmAplicar - 0.9) < 1e-9)
+  })
+
+  it("cuenta toda la duración porque el presurizado es inmediato", () => {
+    const unaHora = estimarMilimetros({
+      duracionMin: 60,
+      caudalPlantaLph: 2,
+      plantas: 1000,
+      superficieHa: 1,
+      superficieMojadaPct: 40,
+      eficienciaPct: 90,
+    })
+    const horaYMedia = estimarMilimetros({
+      duracionMin: 90,
+      caudalPlantaLph: 2,
+      plantas: 1000,
+      superficieHa: 1,
+      superficieMojadaPct: 40,
+      eficienciaPct: 90,
+    })
+    assert.ok(Math.abs(horaYMedia.mmAplicar - unaHora.mmAplicar * 1.5) < 1e-9)
+  })
+
+  it("coincide con la lámina de campo cuando la superficie mojada es total", () => {
+    const entrada = {
+      duracionMin: 120,
+      caudalPlantaLph: 2,
+      plantas: 1000,
+      superficieHa: 1,
+      eficienciaPct: 90,
+    }
+    const agua = aguaAplicada(entrada)
+    const estimacion = estimarMilimetros({ ...entrada, superficieMojadaPct: 100 })
+    assert.ok(Math.abs(estimacion.mmAplicar - agua.mmNetos) < 1e-9)
   })
 
   it("sugiere la duración que repone el déficit", () => {

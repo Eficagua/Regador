@@ -191,6 +191,30 @@ export function remanenteSuelo(capacidadMm: number, depletionMm: number): {
   return { remanenteMm, fraccion }
 }
 
+/**
+ * Milímetros que quedan en el suelo mojado.
+ * La precipitación real es el caudal repartido en la superficie mojada (1 L/m² = 1 mm).
+ * Se ajusta con la eficiencia de referencia del sistema.
+ * El presurizado es inmediato: toda la duración cuenta desde el inicio.
+ */
+export function estimarMilimetros(input: {
+  duracionMin: number
+  caudalPlantaLph: number
+  plantas: number
+  superficieHa: number
+  superficieMojadaPct: number
+  eficienciaPct: number
+}): { precipitacionMmH: number; mmAplicar: number } {
+  const horas = Math.max(0, input.duracionMin) / 60
+  const areaTotal = Math.max(0, input.superficieHa) * 10_000
+  const fraccionMojada = clamp(input.superficieMojadaPct, 0, 100) / 100
+  const areaMojada = areaTotal * fraccionMojada
+  const litrosPorHora = Math.max(0, input.caudalPlantaLph) * Math.max(0, input.plantas)
+  const precipitacionMmH = areaMojada > 0 ? litrosPorHora / areaMojada : 0
+  const mmAplicar = precipitacionMmH * horas * (clamp(input.eficienciaPct, 0, 100) / 100)
+  return { precipitacionMmH, mmAplicar }
+}
+
 export function aguaAplicada(input: {
   duracionMin: number
   caudalPlantaLph: number

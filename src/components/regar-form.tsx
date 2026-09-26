@@ -6,6 +6,7 @@ import { registrarRiego } from "@/lib/actions"
 import { formatoDuracion, formatoNumero } from "@/lib/dates"
 import {
   aguaAplicada,
+  estimarMilimetros,
   balanceEnFecha,
   duracionSugeridaMin,
   puntuarRiego,
@@ -37,6 +38,7 @@ export function RegarForm({
     litrosDisponiblesPorPlanta: number
     caudalPlantaLph: number
     eficienciaPct: number
+    superficieMojadaPct: number
     hoy: string
     cultivo: CultivoTipo
   }
@@ -90,6 +92,14 @@ export function RegarForm({
     eficienciaPct: lote.eficienciaPct,
   })
   const duracion = horas * 60 + minutos
+  const estimacion = estimarMilimetros({
+    duracionMin: Math.max(0, duracion),
+    caudalPlantaLph: lote.caudalPlantaLph,
+    plantas: lote.plantas,
+    superficieHa: lote.superficieHa,
+    superficieMojadaPct: lote.superficieMojadaPct,
+    eficienciaPct: lote.eficienciaPct,
+  })
   const agua = aguaAplicada({
     duracionMin: Math.max(0, duracion),
     caudalPlantaLph: lote.caudalPlantaLph,
@@ -117,6 +127,13 @@ export function RegarForm({
         Registra el riego de {lote.nombre} cuando el evento ya concluyó. La fecha de hoy suma a la racha a partir del segundo día seguido.
       </p>
       <RelojDuracion horas={horas} minutos={minutos} onHoras={setHoras} onMinutos={setMinutos} />
+      <section aria-live="polite" className="rounded-3xl bg-card p-4 ring-1 ring-foreground/10">
+        <p className="text-sm text-muted-foreground">Milímetros a aplicar</p>
+        <p className="mt-1 font-heading text-3xl tabular-nums">{formatoNumero(estimacion.mmAplicar, 1)} mm</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">
+          Precipitación real de {formatoNumero(estimacion.precipitacionMmH, 1)} mm/h sobre el {formatoNumero(lote.superficieMojadaPct, 0)}% de superficie mojada, ajustada con la eficiencia de referencia del {formatoNumero(lote.eficienciaPct, 0)}%. El presurizado es inmediato: la duración completa entra en la estimación.
+        </p>
+      </section>
       <div className="grid gap-1.5">
         <Label htmlFor="fecha">Fecha del riego</Label>
         <Input id="fecha" name="fecha" type="date" required value={fecha} max={lote.hoy} min={lote.fechaInicio} onChange={(event) => setFecha(event.target.value)} className="h-12 bg-card" />
